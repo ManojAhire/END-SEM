@@ -1,41 +1,12 @@
 import axios from 'axios';
 import type { ISSPosition, Astronaut } from '../types';
 
-const ISS_BASE = 'https://api.open-notify.org';
-
-// In dev, Vite proxies /api/iss/* → http://api.open-notify.org/*
-// In production we fall back to public CORS proxies
-function getISSUrl(path: string): string {
-  // Check if we can use Vite's local proxy
-  if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-    return `/api/iss${path}`;
-  }
-  // Production: use corsproxy.io
-  return `https://corsproxy.io/?${encodeURIComponent(`${ISS_BASE}${path}`)}`;
-}
-
-async function fetchWithFallback(path: string): Promise<any> {
-  // Try the environment-appropriate URL first
-  try {
-    const res = await axios.get(getISSUrl(path), { timeout: 8000 });
-    return res.data;
-  } catch {
-    // Final fallback: allorigins
-    try {
-      const res = await axios.get(
-        `https://api.allorigins.win/raw?url=${encodeURIComponent(`${ISS_BASE}${path}`)}`,
-        { timeout: 10000 }
-      );
-      return res.data;
-    } catch {
-      throw new Error(`Failed to fetch ISS data: ${path}`);
-    }
-  }
-}
-
+// Vercel (in production) and Vite (in dev) both proxy /api/iss -> http://api.open-notify.org
+// This seamlessly bypasses all CORS issues without relying on external unreliable proxies.
+const API_BASE = '/api/iss';
 
 export async function fetchISSPosition(): Promise<{ lat: number; lng: number; timestamp: number }> {
-  const data = await fetchWithFallback('/iss-now.json');
+  const { data } = await axios.get(`${API_BASE}/iss-now.json`);
   const { iss_position, timestamp } = data;
   return {
     lat: parseFloat(iss_position.latitude),
@@ -45,7 +16,7 @@ export async function fetchISSPosition(): Promise<{ lat: number; lng: number; ti
 }
 
 export async function fetchPeopleInSpace(): Promise<{ number: number; people: Astronaut[] }> {
-  const data = await fetchWithFallback('/astros.json');
+  const { data } = await axios.get(`${API_BASE}/astros.json`);
   return { number: data.number, people: data.people };
 }
 
