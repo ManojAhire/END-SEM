@@ -45,7 +45,7 @@ export function calculateSpeed(
 export async function reverseGeocode(lat: number, lng: number): Promise<string> {
   try {
     const res = await axios.get(
-      `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=5`,
+      `/api/nominatim/reverse?format=json&lat=${lat}&lon=${lng}&zoom=5`,
       { headers: { 'Accept-Language': 'en' } }
     );
     const addr = res.data.address;

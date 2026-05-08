@@ -5,6 +5,14 @@
       "destination": "http://api.open-notify.org/:match*"
     },
     {
+      "source": "/api/nominatim/:match*",
+      "destination": "https://nominatim.openstreetmap.org/:match*"
+    },
+    {
+      "source": "/api/guardian/:match*",
+      "destination": "https://content.guardianapis.com/:match*"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
     }

@@ -3,7 +3,7 @@ import type { NewsArticle, NewsCategory } from '../types';
 
 // The Guardian Open API supports CORS — call directly from browser
 // Free "test" API key works for development with no registration
-const GUARDIAN_BASE = 'https://content.guardianapis.com';
+const GUARDIAN_BASE = '/api/guardian';
 const API_KEY = import.meta.env.VITE_NEWS_API_KEY || 'test';
 
 const SECTION_MAP: Record<NewsCategory, string> = {
